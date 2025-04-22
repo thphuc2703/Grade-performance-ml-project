@@ -2,7 +2,7 @@ import os
 import sys
  
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
- 
+
 from exception import Custom_Exception
 from logger import logging
 import pandas as pd
@@ -10,8 +10,8 @@ from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 
 from data_transformation import DataTransformation
-from data_transformation import DataTransformationConfig
- 
+from model_trainer import ModelTrainer
+
 @dataclass
 class DataIngestionConfig:
     train_data_path: str=os.path.join('artifact', "train.csv")
@@ -53,4 +53,9 @@ if __name__ == "__main__":
     train_data, test_data = obj.initiate_data_ingestion()
     
     data_transformation = DataTransformation()
-    data_transformation.initiate_data_transformation(train_data, test_data)
+    train_arr, test_arr, _ = data_transformation.initiate_data_transformation(train_data, test_data)
+    
+    model_trainer = ModelTrainer()
+    print(model_trainer.initiate_model_trainer(train_arr, test_arr))
+    
+    

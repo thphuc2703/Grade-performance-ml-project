@@ -19,3 +19,21 @@ def save_object(file_path, obj):
             pickle.dump(obj, file_obj)
     except Exception as e:
         raise Custom_Exception(e, sys)
+    
+def evaluate_model(X_train, y_train, X_test, y_test, models):
+    try:
+        report = {}
+        for name, model in models.items():
+            model.fit(X_train, y_train)
+            
+            y_train_ped = model.predict(X_train)
+            y_test_ped = model.predict(X_test)
+            
+            train_model_score = r2_score(y_train, y_train_ped)
+            test_model_score = r2_score(y_test, y_test_ped)
+            
+            report[name] = test_model_score
+            
+        return report
+    except Exception as e:
+       raise Custom_Exception(e, sys)
