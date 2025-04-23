@@ -21,7 +21,7 @@ def save_object(file_path, obj):
         raise Custom_Exception(e, sys)
     
 def evaluate_model(X_train, y_train, X_test, y_test, models, params):
-    try:
+    try: 
         report = {}
         for name, model in models.items():
             param_grid = params.get(name, {})
@@ -41,3 +41,10 @@ def evaluate_model(X_train, y_train, X_test, y_test, models, params):
         return report
     except Exception as e:
        raise Custom_Exception(e, sys)
+   
+def load_object(file_path):
+    try:
+        with open(file_path, "rb") as file_obj:
+            return pickle.load(file_obj)
+    except Exception as e:
+        raise Custom_Exception(e, sys)    
