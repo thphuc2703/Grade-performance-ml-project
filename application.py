@@ -31,7 +31,6 @@ def predict_data():
         )
         
         prediction_df = data.get_data_as_data_frame()
-        print(predict_data)
         
         predict_pipeline = PredictPipeline()
         res = predict_pipeline.predict(prediction_df)
