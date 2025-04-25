@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import numpy as np 
 import pandas as pd
 import pickle
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.model_selection import GridSearchCV
 
 from exception import Custom_Exception
@@ -23,6 +23,7 @@ def save_object(file_path, obj):
 def evaluate_model(X_train, y_train, X_test, y_test, models, params):
     try: 
         report = {}
+        trained_models = {}
         for name, model in models.items():
             param_grid = params.get(name, {})
             
@@ -35,10 +36,12 @@ def evaluate_model(X_train, y_train, X_test, y_test, models, params):
                 best_model = model
                 
             y_test_ped = best_model.predict(X_test)
-            test_model_score = r2_score(y_test, y_test_ped)
+            # test_model_score = r2_score(y_test, y_test_ped)
+            test_model_score = np.sqrt(mean_squared_error(y_test, y_test_ped))
             report[name] = test_model_score
+            trained_models[name] = best_model
             
-        return report
+        return report, trained_models
     except Exception as e:
        raise Custom_Exception(e, sys)
    

@@ -15,7 +15,7 @@ from sklearn.ensemble import (
     AdaBoostRegressor
 )
 from sklearn.linear_model import LinearRegression, Ridge,Lasso
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.model_selection import RandomizedSearchCV
 from catboost import CatBoostRegressor
 from xgboost import XGBRegressor
@@ -90,19 +90,20 @@ class ModelTrainer:
             }
 
             
-            model_report:dict = evaluate_model(X_train=X_train, y_train=y_train, 
+            model_report, trained_models = evaluate_model(X_train=X_train, y_train=y_train, 
                                                X_test=X_test, y_test=y_test, models=models, params=params)
             
-            best_model_score = max(sorted(model_report.values()))
+            best_model_score = min(sorted(model_report.values()))
             best_model_name = list(model_report.keys())[
                 list(model_report.values()).index(best_model_score)
             ]
             
-            best_model = models[best_model_name]
+            best_model = trained_models[best_model_name]
+            
             
             if best_model_score < 0.6:
                 raise Custom_Exception("No best model found")
-            logging.info("Best found model on both training and testing dataset")
+            logging.info(f"Best found model on both training and testing dataset: {best_model_name}")
             
             save_object(
                 file_path=self.model_trainer_config.train_model_file_path,
@@ -111,9 +112,10 @@ class ModelTrainer:
             
             y_predicted = best_model.predict(X_test)
             
-            r2_square = r2_score(y_test, y_predicted)
+            # r2_square = r2_score(y_test, y_predicted)
+            rmse = np.sqrt(mean_squared_error(y_test, y_predicted))
             
-            return r2_square
+            return rmse
         
         except Exception as e:
             raise Custom_Exception(e, sys)
